@@ -1,0 +1,26 @@
+version: '3'
+services:
+  test:
+    image: golang:1.13
+    volumes:
+      - .:/app
+    working_dir: /app
+    depends_on:
+      - redis
+      - postgres
+    environment:
+      REDIS_HOST: redis
+      DBHOST: postgres
+      DBUSER: tester
+      DBPASS: tester
+      DBNAME: test
+      LISTEN: ":3000"
+    command: bash -c "go test -cover -v ./... && go test -tags integration"
+  redis:
+    image: "redis:alpine"
+  postgres:
+    image: "postgres:alpine"
+    environment:
+      POSTGRES_USER: tester
+      POSTGRES_PASSWORD: tester
+      POSTGRES_DB: test
