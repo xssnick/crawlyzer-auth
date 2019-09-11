@@ -13,9 +13,9 @@ var TestUUID = uuid.FromStringOrNil("4f477db2-17b7-432d-ad0e-c2a098cbd2b0")
 
 func (us *MUserStore) Create(email, password string) (uuid.UUID, error) {
 	if us.FakeError != nil {
-		return uuid.Nil,us.FakeError
+		return uuid.Nil, us.FakeError
 	}
-	return TestUUID,nil
+	return TestUUID, nil
 }
 
 func (us *MUserStore) Auth(sesid string) (uuid.UUID, error) {
@@ -36,9 +36,9 @@ func (us *MUserStore) Logout(sesid string) error {
 
 func (us *MUserStore) Login(email, password string) (string, error) {
 	if us.FakeError != nil {
-		return "",us.FakeError
+		return "", us.FakeError
 	}
-	return "6e536fff-baaf-4ca7-a067-352bafeb6ee3",nil
+	return "6e536fff-baaf-4ca7-a067-352bafeb6ee3", nil
 }
 
 func (us *MUserStore) GetAll() ([]models.User, error) {

@@ -14,66 +14,46 @@ func (wa *WebApp) Login(c iris.Context) {
 	pw := c.PostValue("password")
 
 	if !emailRegex.MatchString(email) {
-		c.StatusCode(http.StatusForbidden)
-		c.JSON(iris.Map{
-			"error": "invalid email",
-		})
+		ThrowError(c, http.StatusForbidden, "invalid email")
 		return
 	}
 
 	if len(pw) < 8 {
-		c.StatusCode(http.StatusForbidden)
-		c.JSON(iris.Map{
-			"error": "incorrect email or password",
-		})
+		ThrowError(c, http.StatusForbidden, "incorrect email or password")
 		return
 	}
 
 	ses, err := wa.Store.User.Login(email, pw)
 	if err != nil {
 		if err == models.ErrLoginIncorrect {
-			c.StatusCode(http.StatusForbidden)
-			c.JSON(iris.Map{
-				"error": "incorrect email or password",
-			})
+			ThrowError(c, http.StatusForbidden, "invalid email")
 		} else {
-			c.StatusCode(http.StatusInternalServerError)
-			c.JSON(iris.Map{
-				"error": "server error",
-			})
 			wa.Logger.Println(err)
+			ThrowError(c, http.StatusInternalServerError, "server error")
 		}
 		return
 	}
 
 	c.JSON(iris.Map{
-		"success": true,
-		"session":ses,
+		"session": ses,
 	})
 }
 
 func (wa *WebApp) Auth(c iris.Context) {
 	sesid := c.PostValue("sesid")
 	if sesid == "" {
-		c.StatusCode(http.StatusForbidden)
-		c.JSON(iris.Map{
-			"success": false,
-		})
+		ThrowError(c, http.StatusForbidden, "incorrect session")
 		return
 	}
 
 	id, err := wa.Store.User.Auth(sesid)
 	if err != nil {
-		c.StatusCode(http.StatusForbidden)
-		c.JSON(iris.Map{
-			"success": false,
-		})
+		ThrowError(c, http.StatusForbidden, "incorrect session")
 		return
 	}
 
 	c.JSON(iris.Map{
-		"success": true,
-		"uuid":    id,
+		"uuid": id,
 	})
 }
 
@@ -82,45 +62,33 @@ func (wa *WebApp) RegisterNewUser(c iris.Context) {
 	pw := c.PostValue("password")
 
 	if !emailRegex.MatchString(email) {
-		c.StatusCode(http.StatusForbidden)
-		c.JSON(iris.Map{
-			"error": "bad email",
-		})
+		ThrowError(c, http.StatusForbidden, "bad email")
 		return
 	}
 
 	if len(pw) < 8 {
-		c.StatusCode(http.StatusForbidden)
-		c.JSON(iris.Map{
-			"error": "bad password",
-		})
+		ThrowError(c, http.StatusForbidden, "bad password")
 		return
 	}
 
 	//TODO: check for already registered
 	_, err := wa.Store.User.Create(email, pw)
 	if err != nil {
-		c.StatusCode(http.StatusInternalServerError)
-		c.JSON(iris.Map{
-			"error": "db err",
-		})
 		wa.Logger.Println(err)
+		ThrowError(c, http.StatusInternalServerError, "server error")
 		return
 	}
 
 	c.JSON(iris.Map{
-		"code": http.StatusOK,
+		"success": true,
 	})
 }
-
 
 func (wa *WebApp) List(c iris.Context) {
 	list, err := wa.Store.User.GetAll()
 	if err != nil {
-		c.StatusCode(http.StatusForbidden)
-		c.JSON(iris.Map{
-			"success": false,
-		})
+		wa.Logger.Println(err)
+		ThrowError(c, http.StatusInternalServerError, "server error")
 		return
 	}
 

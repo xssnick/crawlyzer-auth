@@ -11,7 +11,7 @@ import (
 
 func bootstrap(name string, f func(ds *models.DataStore), t *testing.T) {
 	Convey(name, t, func() {
-		ds,err := models.BuildStore()
+		ds, err := models.BuildStore()
 		if err != nil {
 			t.Fatal("failed to init datastore")
 			return
@@ -26,19 +26,19 @@ func bootstrap(name string, f func(ds *models.DataStore), t *testing.T) {
 func TestCreate(t *testing.T) {
 	bootstrap("User creation", func(ds *models.DataStore) {
 		Convey("When OK", func() {
-			uid,err:=ds.User.Create("kis@pips.com", "231vre423")
+			uid, err := ds.User.Create("kis@pips.com", "231vre423")
 
 			So(err, ShouldEqual, nil)
 			So(uid, ShouldNotEqual, uuid.Nil)
 		})
 
 		Convey("When duplicate", func() {
-			uid,err:=ds.User.Create("kis@pips.com", "231vre423")
+			uid, err := ds.User.Create("kis@pips.com", "231vre423")
 
 			So(err, ShouldEqual, nil)
 			So(uid, ShouldNotEqual, uuid.Nil)
 
-			_,err = ds.User.Create("kis@pips.com", "3423423")
+			_, err = ds.User.Create("kis@pips.com", "3423423")
 			So(err, ShouldEqual, models.ErrAlreadyCreated)
 		})
 	}, t)
@@ -90,15 +90,15 @@ func TestGetAll(t *testing.T) {
 func TestAuth(t *testing.T) {
 	bootstrap("User auth", func(ds *models.DataStore) {
 		Convey("When session not exists", func() {
-			_,err:=ds.User.Auth("unknown-ses-id")
+			_, err := ds.User.Auth("unknown-ses-id")
 			So(err, ShouldEqual, models.ErrAuthIncorrect)
 		})
 
 		Convey("When session exists", func() {
-			cuid,_:=ds.User.Create("kis@pips.com", "7564756fg")
-			sesid,_:=ds.User.Login("kis@pips.com", "7564756fg")
+			cuid, _ := ds.User.Create("kis@pips.com", "7564756fg")
+			sesid, _ := ds.User.Login("kis@pips.com", "7564756fg")
 
-			uid,err:=ds.User.Auth(sesid)
+			uid, err := ds.User.Auth(sesid)
 			So(err, ShouldEqual, nil)
 			So(uid, ShouldEqual, cuid)
 		})

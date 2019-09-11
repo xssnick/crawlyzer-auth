@@ -14,7 +14,6 @@ WORKDIR /app
 
 COPY --from=builder /app/service .
 
-ENV LISTEN=":3000"
 EXPOSE 3000
 
 ENTRYPOINT ["./service"]

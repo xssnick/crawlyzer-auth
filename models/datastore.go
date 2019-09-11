@@ -16,7 +16,7 @@ import (
 type DataStore struct {
 	User IUserStore
 
-	Redis *redis.Client
+	Redis    *redis.Client
 	Postgres *sqlx.DB
 }
 
@@ -27,37 +27,37 @@ type DBConf struct {
 	Password string
 }
 
-func BuildStore() (*DataStore,error) {
+func BuildStore() (*DataStore, error) {
 	db, err := InitSQLStore()
 	if err != nil {
 		panic(err)
 	}
 
-	red ,err := InitRedisStore()
+	red, err := InitRedisStore()
 	if err != nil {
 		panic(err)
 	}
 
 	return &DataStore{
-		User: NewUserStore(db,red),
+		User: NewUserStore(db, red),
 
-		Redis:red,
-		Postgres:db,
+		Redis:    red,
+		Postgres: db,
 	}, nil
 }
 
 func InitRedisStore() (*redis.Client, error) {
 	client := redis.NewClient(&redis.Options{
-		Addr:     os.Getenv("REDIS_HOST")+":6379",
+		Addr:     os.Getenv("REDIS_HOST") + ":6379",
 		Password: os.Getenv("REDIS_PASSWORD"),
-		DB:       0,  // use default DB
+		DB:       0, // use default DB
 	})
 
 	_, err := client.Ping().Result()
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
-	return client,nil
+	return client, nil
 }
 
 func InitSQLStore() (*sqlx.DB, error) {
@@ -76,20 +76,20 @@ func InitSQLStore() (*sqlx.DB, error) {
 				})
 				if err != nil {
 					log.Println("dbconf.json writing error:", err)
-					return  nil, err
+					return nil, err
 				}
 				log.Println("dbconf.json created, fill it now!")
 				defer os.Exit(0)
-				return  nil, err
+				return nil, err
 			}
 			log.Println("dbconf.json open error:", err)
-			return  nil, err
+			return nil, err
 		}
 
 		err = json.NewDecoder(f).Decode(&conf)
 		if err != nil {
 			log.Println("dbconf.json decode error:", err)
-			return  nil, err
+			return nil, err
 		}
 	} else {
 		conf = DBConf{
@@ -116,7 +116,7 @@ func InitSQLStore() (*sqlx.DB, error) {
 
 	if err = m.Up(); err != nil && err != migrate.ErrNoChange {
 		log.Println("postgresql migrate error:", err)
-		return  nil, err
+		return nil, err
 	}
 	return db, nil
 }
