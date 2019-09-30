@@ -22,9 +22,13 @@ func InitApp(store *models.DataStore) *iris.Application {
 		Logger: log.New(os.Stdout, "[handler]", log.LstdFlags|log.Lshortfile),
 	}
 
-	app.Post("/user/login", wa.Login)
-	app.Post("/user/auth", wa.Auth)
-	app.Post("/user/register", wa.RegisterNewUser)
-	app.Get("/user/list", wa.List)
+	app.Post("/login", wa.Login)
+	app.Post("/auth", wa.Auth)
+	app.Post("/register", wa.RegisterNewUser)
+	app.Get("/list", wa.List)
+	app.Get("/node", wa.Node)
+	app.OnErrorCode(404,func(c iris.Context) {
+		c.JSON(c.Request().URL.String())
+	})
 	return app
 }

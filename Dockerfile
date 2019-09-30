@@ -12,8 +12,9 @@ FROM alpine:latest
 
 WORKDIR /app
 
+COPY ./migrations /app/migrations
 COPY --from=builder /app/service .
 
-EXPOSE 3000
+EXPOSE 8080
 
 ENTRYPOINT ["./service"]

@@ -4,6 +4,7 @@ import (
 	"github.com/kataras/iris"
 	"github.com/xssnick/crawlyzer-auth/models"
 	"net/http"
+	"os"
 	"regexp"
 )
 
@@ -93,4 +94,8 @@ func (wa *WebApp) List(c iris.Context) {
 	}
 
 	c.JSON(list)
+}
+
+func (wa *WebApp) Node(c iris.Context) {
+	c.JSON(os.Getenv("NODEID"))
 }
