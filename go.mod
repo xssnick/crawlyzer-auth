@@ -29,7 +29,7 @@ require (
 	github.com/klauspost/cpuid v1.2.1 // indirect
 	github.com/lib/pq v1.0.0
 	github.com/mattn/go-colorable v0.1.2 // indirect
-	github.com/microcosm-cc/bluemonday v1.0.2 // indirect
+	github.com/microcosm-cc/bluemonday v1.0.20 // indirect
 	github.com/moul/http2curl v1.0.0 // indirect
 	github.com/ryanuber/columnize v2.1.0+incompatible // indirect
 	github.com/sergi/go-diff v1.0.0 // indirect
